@@ -1,0 +1,123 @@
+/* src/styles/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Ingeniia Dark Theme - Deep Learning Platform */
+    --background: 0 0% 6%;
+    --foreground: 0 0% 95%;
+
+    --card: 0 0% 12%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 193 100% 50%;
+    --primary-foreground: 0 0% 6%;
+
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 95%;
+
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
+
+    --accent: 193 100% 50%;
+    --accent-foreground: 0 0% 6%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 95%;
+
+    --border: 0 0% 15%;
+    --input: 0 0% 12%;
+    --ring: 193 100% 50%;
+
+    --radius: 0.75rem;
+
+    /* Neon colors for neural network roadmap */
+    --neon-cyan: 193 100% 50%;
+    --neon-orange: 28 100% 50%;
+    --neon-green: 122 100% 50%;
+    --neon-magenta: 296 100% 50%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(0 0% 6%), hsl(0 0% 8%));
+    --gradient-section: linear-gradient(180deg, hsl(0 0% 6%), hsl(0 0% 4%));
+    --gradient-neural: linear-gradient(45deg, hsl(193 100% 50% / 0.1), hsl(296 100% 50% / 0.1));
+
+    /* Glows and shadows */
+    --glow-cyan: 0 0 20px hsl(193 100% 50% / 0.3);
+    --glow-orange: 0 0 20px hsl(28 100% 50% / 0.3);
+    --glow-green: 0 0 20px hsl(122 100% 50% / 0.3);
+    --glow-magenta: 0 0 20px hsl(296 100% 50% / 0.3);
+
+    --shadow-neural: 0 8px 32px hsl(0 0% 0% / 0.3);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer base {
+  :root {
+    /* Colores de marca exactos (HSL de #00d3ff, #00ff0b, #ff7600) */
+    --brand-cyan: 190 100% 50%;
+    --brand-green: 123 100% 50%;
+    --brand-orange: 28 100% 50%;
+    --brand-gray: 190 0% 50%;
+  }
+}
+
+@layer utilities {
+  .text-neon-cyan { color: hsl(var(--neon-cyan)); }
+  .text-neon-orange { color: hsl(var(--neon-orange)); }
+  .text-neon-green { color: hsl(var(--neon-green)); }
+  .text-neon-magenta { color: hsl(var(--neon-magenta)); }
+  
+  
+  .bg-neon-cyan { background-color: hsl(var(--neon-cyan)); }
+  .bg-neon-orange { background-color: hsl(var(--neon-orange)); }
+  .bg-neon-green { background-color: hsl(var(--neon-green)); }
+  .bg-neon-magenta { background-color: hsl(var(--neon-magenta)); }
+  
+  
+  .border-neon-cyan { --tw-border-opacity: 1; border-color: hsl(var(--neon-cyan) / var(--tw-border-opacity)); }
+  .border-neon-orange { --tw-border-opacity: 1; border-color: hsl(var(--neon-orange) / var(--tw-border-opacity)); }
+  .border-neon-green { --tw-border-opacity: 1; border-color: hsl(var(--neon-green) / var(--tw-border-opacity)); }
+  .border-neon-magenta { --tw-border-opacity: 1; border-color: hsl(var(--neon-magenta) / var(--tw-border-opacity)); }
+  
+  
+  .shadow-glow-cyan { box-shadow: 0 0 24px hsl(var(--neon-cyan) / 0.22); }
+  .shadow-glow-orange { box-shadow: 0 0 24px hsl(var(--neon-orange) / 0.22); }
+  .shadow-glow-green { box-shadow: 0 0 24px hsl(var(--neon-green) / 0.22); }
+  .shadow-glow-magenta { box-shadow: 0 0 24px hsl(var(--neon-magenta) / 0.22); }
+  
+  
+  /* pulsos suaves */
+  @keyframes ping-slow { 0% { transform: scale(1); opacity: 0.5; } 80%,100% { transform: scale(1.6); opacity: 0; } }
+  .animate-ping-slow { animation: ping-slow 2.4s cubic-bezier(0, 0, 0.2, 1) infinite; }
+  
+  
+  /* línea discontinua en movimiento */
+  @keyframes dash { to { stroke-dashoffset: -200; } }
+  .animate-dash { animation: dash 4s linear infinite; stroke-dashoffset: 0; }
+  }
+  
+  
+  /* --- Scroll snap a pantalla completa (Header, Roadmap, etc.) --- */
+  @layer base {
+  html, body { height: 100%; }
+  }
