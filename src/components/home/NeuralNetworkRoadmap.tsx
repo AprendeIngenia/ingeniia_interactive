@@ -71,7 +71,18 @@ const NeuralNetworkRoadmap: React.FC = () => {
   };
 
   // Hasta que estén listas las páginas: solo toast
-  const handleOpen = (id: string, _kind: "docs" | "demo") => {
+  const handleOpen = (id: string, kind: "docs" | "demo") => {
+
+    if (id === "mlp" && kind === "docs") {
+      window.location.href = "/mlp"; // Redirección a la nueva página
+      return; // Detenemos la ejecución para no mostrar el toast
+    }
+
+    if (id === "mlp" && kind === "demo") {
+      window.location.href = "/mlp_demo"; // Redirección a la nueva página
+      return; // Detenemos la ejecución para no mostrar el toast
+    }
+
     toast({
       title: `${id}`,
       description: "El profe está preparando profundamente la clase de esta Red Neuronal",
