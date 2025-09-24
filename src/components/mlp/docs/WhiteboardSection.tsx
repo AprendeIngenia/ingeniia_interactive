@@ -1,21 +1,11 @@
 // src/components/mlp/WhiteboardSection.tsx
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Eye, Download, ExternalLink, LoaderCircle, AlertTriangle, PenLine } from 'lucide-react';
+import { Download, ExternalLink, LoaderCircle, AlertTriangle, PenLine } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-// --- Tipado de datos extendido ---
-interface WhiteboardData {
-  id: string;
-  preview_url: string;
-  file_url: string;
-}
-
-interface VideoData {
-  id: string;
-  title: string;
-  whiteboard?: WhiteboardData;
-}
+import { useFetchData } from '@/hooks/useFetchData';
+import { contentService, type VideoData } from '@/services/contentService';
 
 // --- Componente de la Tarjeta de Pizarra ---
 const WhiteboardCard = ({ video }: { video: VideoData }) => {
@@ -43,13 +33,18 @@ const WhiteboardCard = ({ video }: { video: VideoData }) => {
         <p className="text-sm text-muted-foreground/80">El lienzo donde las ideas cobran vida.</p>
       </div>
 
-      {/* Botones de acción que aparecen al hacer hover */}
+      {/* Botones de acción al hacer hover */}
       <div className="absolute inset-0 flex items-center justify-center gap-4 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-sm">
         <TooltipProvider delayDuration={100}>
           {/* ABRIR EN EXCALIDRAW (enlace externo) */}
           <Tooltip>
             <TooltipTrigger asChild>
-              <a href="https://excalidraw.com/" target="_blank" rel="noopener noreferrer" className="p-3 rounded-full bg-neon-cyan/10 text-neon-cyan hover:bg-neon-cyan/20 transition-colors">
+              <a
+                href="https://excalidraw.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-3 rounded-full bg-neon-cyan/10 text-neon-cyan hover:bg-neon-cyan/20 transition-colors"
+              >
                 <ExternalLink className="w-6 h-6" />
               </a>
             </TooltipTrigger>
@@ -60,7 +55,11 @@ const WhiteboardCard = ({ video }: { video: VideoData }) => {
           {/* DESCARGAR ARCHIVO */}
           <Tooltip>
             <TooltipTrigger asChild>
-              <a href={video.whiteboard.file_url} download className="p-3 rounded-full bg-neon-magenta/10 text-neon-magenta hover:bg-neon-magenta/20 transition-colors">
+              <a
+                href={video.whiteboard.file_url}
+                download
+                className="p-3 rounded-full bg-neon-magenta/10 text-neon-magenta hover:bg-neon-magenta/20 transition-colors"
+              >
                 <Download className="w-6 h-6" />
               </a>
             </TooltipTrigger>
@@ -74,34 +73,14 @@ const WhiteboardCard = ({ video }: { video: VideoData }) => {
   );
 };
 
-
 // --- Componente Principal de la Sección ---
 const WhiteboardSection = () => {
-  const [videosWithWhiteboards, setVideosWithWhiteboards] = useState<VideoData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, error } = useFetchData(contentService.getVideosByTopic, 'mlp');
 
-  useEffect(() => {
-    const fetchContent = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_CONTENT_SERVICE_URL}/videos/topic/mlp`);
-        if (!response.ok) throw new Error("No se pudo conectar al servidor de contenido.");
-        const data: VideoData[] = await response.json();
-        
-        // Filtramos para quedarnos solo con los videos que tienen pizarra
-        const filteredData = data.filter(video => video.whiteboard);
-        setVideosWithWhiteboards(filteredData);
-        
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Un error inesperado ocurrió.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchContent();
-  }, []);
+  const videosWithWhiteboards = useMemo(
+    () => (data ?? []).filter((video) => !!video.whiteboard),
+    [data]
+  );
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -144,7 +123,7 @@ const WhiteboardSection = () => {
             <p className="font-semibold">{error}</p>
           </div>
         )}
-        
+
         {!isLoading && !error && (
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
@@ -153,7 +132,7 @@ const WhiteboardSection = () => {
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
           >
-            {videosWithWhiteboards.map(video => (
+            {videosWithWhiteboards.map((video) => (
               <WhiteboardCard key={video.id} video={video} />
             ))}
           </motion.div>

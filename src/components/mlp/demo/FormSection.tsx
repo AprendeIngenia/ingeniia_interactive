@@ -1,7 +1,5 @@
-// src/components/mlp/demo/FormSetion.tsx
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { postCreditRisk, type CreditRiskInput, type CreditRiskOutput } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { 
   User, 
@@ -15,18 +13,11 @@ import {
   Sparkles
 } from 'lucide-react';
 
+// 👉 Nuevo import: servicio y tipos desde src/services
+import { creditScoringService, type CreditRiskInput, type CreditRiskOutput } from '@/services/creditScoringService';
+
 // --- Tipado de datos y valores por defecto ---
-type FormData = {
-  Age: number;
-  Sex: 'male' | 'female';
-  Job: number;
-  Housing: 'own' | 'rent' | 'free';
-  "Saving accounts": 'NA' | 'little' | 'moderate' | 'quite rich' | 'rich';
-  "Checking account": 'NA' | 'little' | 'moderate' | 'rich';
-  "Credit amount": number;
-  Duration: number;
-  Purpose: 'car' | 'furniture/equipment' | 'radio/TV' | 'domestic appliances' | 'repairs' | 'education' | 'business' | 'vacation/others';
-};
+type FormData = CreditRiskInput;
 
 const initialFormData: FormData = {
   Age: 35,
@@ -80,18 +71,7 @@ interface FormSectionProps {
 
 const FormSection: React.FC<FormSectionProps> = ({ onPredicted }) => {
   const { toast } = useToast();
-  const [formData, setFormData] = useState<CreditRiskInput>({
-    Age: 35,
-    Sex: 'male',
-    Job: 1,
-    Housing: 'own',
-    'Saving accounts': 'little',
-    'Checking account': 'moderate',
-    'Credit amount': 5000,
-    Duration: 24,
-    Purpose: 'car',
-  });
-
+  const [formData, setFormData] = useState<CreditRiskInput>(initialFormData);
   const [submitting, setSubmitting] = useState(false);
   
   const handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement> = (e) => {
@@ -108,7 +88,7 @@ const FormSection: React.FC<FormSectionProps> = ({ onPredicted }) => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const output = await postCreditRisk(formData);
+      const output = await creditScoringService.postCreditRisk(formData);
 
       if (typeof onPredicted === 'function') {
         onPredicted(formData, output);
@@ -151,7 +131,7 @@ const FormSection: React.FC<FormSectionProps> = ({ onPredicted }) => {
           </h2>
           <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
             Nuestra IA analiza cada detalle para ofrecerte una decisión justa y transparente. 
-            <strong>Cada campo es un paso hacia tu futuro financiero.</strong>
+            <strong> Cada campo es un paso hacia tu futuro financiero.</strong>
           </p>
         </div>
 
@@ -166,7 +146,16 @@ const FormSection: React.FC<FormSectionProps> = ({ onPredicted }) => {
               <label className="block text-sm font-medium text-muted-foreground mb-2 ml-1">Sexo</label>
               <div className="flex gap-4">
                 {(['male', 'female'] as const).map(sex => (
-                  <button type="button" key={sex} onClick={() => handleCustomChange('Sex', sex)} className={`flex-1 py-2 text-sm font-semibold rounded-lg border transition-all ${formData.Sex === sex ? 'bg-neon-purple text-white border-neon-purple shadow-[0_0_25px_hsl(var(--neon-purple)/0.5)]' : 'bg-neutral-800/50 border-white/10 hover:border-white/30'}`}>
+                  <button
+                    type="button"
+                    key={sex}
+                    onClick={() => handleCustomChange('Sex', sex)}
+                    className={`flex-1 py-2 text-sm font-semibold rounded-lg border transition-all ${
+                      formData.Sex === sex
+                        ? 'bg-neon-purple text-white border-neon-purple shadow-[0_0_25px_hsl(var(--neon-purple)/0.5)]'
+                        : 'bg-neutral-800/50 border-white/10 hover:border-white/30'
+                    }`}
+                  >
                     {sex === 'male' ? 'Hombre' : 'Mujer'}
                   </button>
                 ))}
@@ -174,33 +163,42 @@ const FormSection: React.FC<FormSectionProps> = ({ onPredicted }) => {
             </div>
 
             <SelectField label="Propósito del Crédito" icon={Target} name="Purpose" value={formData.Purpose} onChange={handleChange}>
-                <option value="car">Carro</option>
-                <option value="furniture/equipment">Muebles/Equipamiento</option>
-                <option value="radio/TV">Radio/TV</option>
-                <option value="domestic appliances">Electrodomésticos</option>
-                <option value="repairs">Reparaciones</option>
-                <option value="education">Educación</option>
-                <option value="business">Negocios</option>
-                <option value="vacation/others">Vacaciones/Otros</option>
+              <option value="car">Carro</option>
+              <option value="furniture/equipment">Muebles/Equipamiento</option>
+              <option value="radio/TV">Radio/TV</option>
+              <option value="domestic appliances">Electrodomésticos</option>
+              <option value="repairs">Reparaciones</option>
+              <option value="education">Educación</option>
+              <option value="business">Negocios</option>
+              <option value="vacation/others">Vacaciones/Otros</option>
             </SelectField>
             <SelectField label="Cuenta de Ahorros" icon={PiggyBank} name="Saving accounts" value={formData['Saving accounts']} onChange={handleChange}>
-                <option value="NA">No Aplica</option>
-                <option value="little">Bajos</option>
-                <option value="moderate">Moderados</option>
-                <option value="quite rich">Altos</option>
-                <option value="rich">Muy Altos</option>
+              <option value="NA">No Aplica</option>
+              <option value="little">Bajos</option>
+              <option value="moderate">Moderados</option>
+              <option value="quite rich">Altos</option>
+              <option value="rich">Muy Altos</option>
             </SelectField>
             <SelectField label="Cuenta Corriente" icon={Landmark} name="Checking account" value={formData['Checking account']} onChange={handleChange}>
-                <option value="NA">No Aplica</option>
-                <option value="little">Bajos</option>
-                <option value="moderate">Moderados</option>
-                <option value="rich">Altos</option>
+              <option value="NA">No Aplica</option>
+              <option value="little">Bajos</option>
+              <option value="moderate">Moderados</option>
+              <option value="rich">Altos</option>
             </SelectField>
             <div>
               <label className="block text-sm font-medium text-muted-foreground mb-2 ml-1">Vivienda</label>
               <div className="flex gap-4">
                 {(['own', 'rent', 'free'] as const).map(housing => (
-                  <button type="button" key={housing} onClick={() => handleCustomChange('Housing', housing)} className={`flex-1 py-2 text-sm font-semibold capitalize rounded-lg border transition-all ${formData.Housing === housing ? 'bg-neon-purple text-white border-neon-purple shadow-[0_0_25px_hsl(var(--neon-purple)/0.5)]' : 'bg-neutral-800/50 border-white/10 hover:border-white/30'}`}>
+                  <button
+                    type="button"
+                    key={housing}
+                    onClick={() => handleCustomChange('Housing', housing)}
+                    className={`flex-1 py-2 text-sm font-semibold capitalize rounded-lg border transition-all ${
+                      formData.Housing === housing
+                        ? 'bg-neon-purple text-white border-neon-purple shadow-[0_0_25px_hsl(var(--neon-purple)/0.5)]'
+                        : 'bg-neutral-800/50 border-white/10 hover:border-white/30'
+                    }`}
+                  >
                     {housing === 'own' ? 'Propia' : housing === 'rent' ? 'Alquilada' : 'Gratis'}
                   </button>
                 ))}
@@ -208,7 +206,9 @@ const FormSection: React.FC<FormSectionProps> = ({ onPredicted }) => {
             </div>
 
             <div className="md:col-span-2">
-               <label className="block text-sm font-medium text-muted-foreground mb-2 ml-1">Nivel Laboral: <span className="font-bold text-neon-cyan">{jobLabels[formData.Job]}</span></label>
+               <label className="block text-sm font-medium text-muted-foreground mb-2 ml-1">
+                 Nivel Laboral: <span className="font-bold text-neon-cyan">{jobLabels[formData.Job]}</span>
+               </label>
                <input 
                   type="range"
                   name="Job"
