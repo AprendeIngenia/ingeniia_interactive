@@ -78,6 +78,7 @@ All colors MUST be HSL.
     --brand-green: 123 100% 50%;
     --brand-orange: 28 100% 50%;
     --brand-gray: 190 0% 50%;
+    --neon-purple: 260 85% 60%;
   }
 }
 
@@ -86,24 +87,28 @@ All colors MUST be HSL.
   .text-neon-orange { color: hsl(var(--neon-orange)); }
   .text-neon-green { color: hsl(var(--neon-green)); }
   .text-neon-magenta { color: hsl(var(--neon-magenta)); }
+  .text-neon-purple { color: hsl(var(--neon-purple)); }
   
   
   .bg-neon-cyan { background-color: hsl(var(--neon-cyan)); }
   .bg-neon-orange { background-color: hsl(var(--neon-orange)); }
   .bg-neon-green { background-color: hsl(var(--neon-green)); }
   .bg-neon-magenta { background-color: hsl(var(--neon-magenta)); }
+  .bg-neon-purple { background-color: hsl(var(--neon-purple)); }
   
   
   .border-neon-cyan { --tw-border-opacity: 1; border-color: hsl(var(--neon-cyan) / var(--tw-border-opacity)); }
   .border-neon-orange { --tw-border-opacity: 1; border-color: hsl(var(--neon-orange) / var(--tw-border-opacity)); }
   .border-neon-green { --tw-border-opacity: 1; border-color: hsl(var(--neon-green) / var(--tw-border-opacity)); }
   .border-neon-magenta { --tw-border-opacity: 1; border-color: hsl(var(--neon-magenta) / var(--tw-border-opacity)); }
+  .border-neon-purple { --tw-border-opacity: 1; border-color: hsl(var(--neon-purple) / var(--tw-border-opacity)); }
   
   
   .shadow-glow-cyan { box-shadow: 0 0 24px hsl(var(--neon-cyan) / 0.22); }
   .shadow-glow-orange { box-shadow: 0 0 24px hsl(var(--neon-orange) / 0.22); }
   .shadow-glow-green { box-shadow: 0 0 24px hsl(var(--neon-green) / 0.22); }
   .shadow-glow-magenta { box-shadow: 0 0 24px hsl(var(--neon-magenta) / 0.22); }
+  .shadow-glow-purple { box-shadow: var(--glow-purple); }
   
   
   /* pulsos suaves */

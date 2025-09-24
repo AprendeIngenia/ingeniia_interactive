@@ -16,3 +16,6 @@ const Index = () => {
 };
 
 export default Index;
+
+
+// tree: node -e "const fs=require('fs'),p=process.argv[1]||'.',d=(x,l=0)=>{if(l>3)return;let s='';for(const f of fs.readdirSync(x,{withFileTypes:true}))if(!['.git','node_modules','.next','dist','build'].includes(f.name)){s+='|  '.repeat(l)+(f.isDirectory()?'├─ ':'├─ ')+f.name+(f.isDirectory()?'/':'')+'\n';if(f.isDirectory())s+=d(x+'/'+f.name,l+1)}return s};fs.writeFileSync('ARBOL.txt',p+'\n'+d(p));"
