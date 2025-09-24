@@ -5,14 +5,8 @@ import { Terminal, Copy, Check, GitFork, LoaderCircle, AlertTriangle } from 'luc
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-// --- Tipado de datos ---
-interface CodeSnippetData {
-  id: string;
-  title: string;
-  language: string;
-  github_url: string;
-  code: string;
-}
+import { useFetchData } from '@/hooks/useFetchData';
+import { contentService, type CodeSnippetData } from '@/services/contentService';
 
 // --- Componente de Visualización de Código ---
 const CodeViewer = ({ snippets }: { snippets: CodeSnippetData[] }) => {
@@ -50,7 +44,11 @@ const CodeViewer = ({ snippets }: { snippets: CodeSnippetData[] }) => {
 
       {/* Cuerpo del Código */}
       <div className="text-sm">
-        <SyntaxHighlighter language={snippets[activeTab].language} style={vscDarkPlus} customStyle={{ background: 'transparent', margin: 0, padding: '1.25rem' }}>
+        <SyntaxHighlighter
+          language={snippets[activeTab].language}
+          style={vscDarkPlus}
+          customStyle={{ background: 'transparent', margin: 0, padding: '1.25rem' }}
+        >
           {snippets[activeTab].code}
         </SyntaxHighlighter>
       </div>
@@ -60,27 +58,7 @@ const CodeViewer = ({ snippets }: { snippets: CodeSnippetData[] }) => {
 
 // --- Componente Principal de la Sección ---
 const CodeDemosSection = () => {
-  const [snippets, setSnippets] = useState<CodeSnippetData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchSnippets = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_CONTENT_SERVICE_URL}/snippets/topic/mlp`);
-        if (!response.ok) throw new Error("Los planos de la IA aún son un secreto...");
-        const data: CodeSnippetData[] = await response.json();
-        setSnippets(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Error al conectar con la fuente.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchSnippets();
-  }, []);
+  const { data: snippets, isLoading, error } = useFetchData(contentService.getSnippetsByTopic, 'mlp');
 
   return (
     <section id="codigo-demos" className="relative py-24 border-t border-white/5 bg-background overflow-hidden">
@@ -107,17 +85,26 @@ const CodeDemosSection = () => {
           </p>
         </motion.div>
 
-        {isLoading && <div className="flex justify-center"><LoaderCircle className="w-10 h-10 text-neon-magenta animate-spin" /></div>}
-        {error && <div className="text-center text-red-400"><AlertTriangle className="inline-block w-6 h-6 mr-2" />{error}</div>}
+        {isLoading && (
+          <div className="flex justify-center">
+            <LoaderCircle className="w-10 h-10 text-neon-magenta animate-spin" />
+          </div>
+        )}
+        {error && (
+          <div className="text-center text-red-400">
+            <AlertTriangle className="inline-block w-6 h-6 mr-2" />
+            {error}
+          </div>
+        )}
 
-        {!isLoading && !error && snippets.length > 0 && (
+        {!isLoading && !error && (snippets?.length ?? 0) > 0 && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.7, ease: 'easeOut' }}
           >
-            <CodeViewer snippets={snippets} />
+            <CodeViewer snippets={snippets!} />
           </motion.div>
         )}
 
