@@ -24,7 +24,7 @@ const CREDIT_API_BASE = import.meta.env.VITE_API_CREDIT_SCORING_SERVICE_URL;
 
 // --- Funciones del Servicio ---
 const postCreditRisk = (payload: CreditRiskInput): Promise<CreditRiskOutput> => {
-  return apiClient<CreditRiskOutput>(`${CREDIT_API_BASE}/v1/predict`, {
+  return apiClient<CreditRiskOutput>(`${CREDIT_API_BASE}/mlp_demo`, {
     method: 'POST',
     body: payload as any,
   });
