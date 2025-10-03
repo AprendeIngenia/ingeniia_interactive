@@ -79,7 +79,7 @@ const Header = () => {
                   onClick={handleStart}
                   className="px-4 py-2 bg-white text-black text-sm font-semibold rounded-md hover:bg-gray-200 transition-colors"
                 >
-                  Empezar
+                  Registrarse
                 </button>
               </>
             ) : (
@@ -143,7 +143,7 @@ const Header = () => {
               onClick={handleStart}
               className="group relative px-8 py-4 bg-card/80 border border-[hsla(var(--brand-cyan)/.30)] rounded-xl font-medium text-foreground hover:shadow-[0_0_20px_hsla(var(--brand-cyan)/.35)] transition-all duration-300 hover:scale-105"
             >
-              <span className="relative z-10">{isAuthenticated ? "Ir al roadmap" : "Comenzar (crear cuenta)"}</span>
+              <span className="relative z-10">{isAuthenticated ? "Ir al roadmap" : "Aprender Deep Learning"}</span>
               <div
                 className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                 style={{
