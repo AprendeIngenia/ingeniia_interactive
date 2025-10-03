@@ -1,4 +1,6 @@
-// src/components/home/Header.tsx
+import AuthModal from "@/components/auth/AuthModal";
+import { useAuth } from "@/state/AuthContext";
+
 const NerdFaceIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
   <svg
     className={className}
@@ -20,10 +22,21 @@ const NerdFaceIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
 );
 
 const Header = () => {
+  const { openAuthModal, isAuthenticated, user, logout } = useAuth();
+
   const goToRoadmap = () => {
     const el = document.getElementById("roadmap");
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  const handleStart = () => {
+    if (isAuthenticated) {
+      goToRoadmap();
+    } else {
+      openAuthModal();
+    }
+  };
+
   return (
     <header className="relative overflow-hidden border-b border-white/5 min-h-[100svh] flex flex-col">
       {/* Fondo con degradado y patrón de cuadrícula */}
@@ -54,18 +67,40 @@ const Header = () => {
           </div>
 
           <div className="flex items-center space-x-4">
-            <a href="#login" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-              Login
-            </a>
-            <button className="px-4 py-2 bg-white text-black text-sm font-semibold rounded-md hover:bg-gray-200 transition-colors">
-              Empezar
-            </button>
+            {!isAuthenticated ? (
+              <>
+                <button
+                  onClick={openAuthModal}
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={handleStart}
+                  className="px-4 py-2 bg-white text-black text-sm font-semibold rounded-md hover:bg-gray-200 transition-colors"
+                >
+                  Empezar
+                </button>
+              </>
+            ) : (
+              <>
+                <span className="text-sm text-muted-foreground">
+                  Hola, <span className="font-semibold text-foreground">{user?.username ?? user?.email}</span>
+                </span>
+                <button
+                  onClick={logout}
+                  className="px-3 py-2 border border-white/10 rounded-md text-sm hover:bg-white/10 transition-colors"
+                >
+                  Salir
+                </button>
+              </>
+            )}
           </div>
         </nav>
 
         {/* Contenido Principal del Header */}
         <div className="text-center py-16 md:py-24 lg:py-28 flex-1 flex flex-col items-center justify-center">
-          {/* Slogan: degradado #00ff21 -> #00fff7 y carita con gafitas */}
+          {/* Slogan */}
           <div className="inline-flex items-center space-x-2 border border-white/10 bg-card/60 backdrop-blur px-3 py-1 rounded-full mb-6 text-sm">
             <span className="text-[hsl(var(--brand-lime))]">
               <NerdFaceIcon />
@@ -81,7 +116,7 @@ const Header = () => {
             </span>
           </div>
 
-          {/* Título Principal con neón sutil cyan (#00d3ff) */}
+          {/* Título */}
           <h1 className="text-4xl md:text-6xl font-bold tracking-tighter text-foreground max-w-4xl mx-auto leading-[1.05]">
             Domina el mundo del
             <br />
@@ -90,7 +125,7 @@ const Header = () => {
             </span>
           </h1>
 
-          {/* Subtítulo: friso oscuro, en una sola línea */}
+          {/* Subtítulo */}
           <div className="mt-6">
             <p
               className="inline-flex items-center whitespace-nowrap bg-black/40 border border-white/10 rounded-full px-4 py-2 text-sm md:text-base text-muted-foreground/90"
@@ -103,11 +138,12 @@ const Header = () => {
           {/* CTA */}
           <div className="mt-10">
             <button
-            type="button"
-            aria-label="Ir al roadmap"
-            onClick={goToRoadmap}
-            className="group relative px-8 py-4 bg-card/80 border border-[hsla(var(--brand-cyan)/.30)] rounded-xl font-medium text-foreground hover:shadow-[0_0_20px_hsla(var(--brand-cyan)/.35)] transition-all duration-300 hover:scale-105">
-              <span className="relative z-10">Comenzar mi aprendizaje</span>
+              type="button"
+              aria-label="Ir al roadmap o abrir login"
+              onClick={handleStart}
+              className="group relative px-8 py-4 bg-card/80 border border-[hsla(var(--brand-cyan)/.30)] rounded-xl font-medium text-foreground hover:shadow-[0_0_20px_hsla(var(--brand-cyan)/.35)] transition-all duration-300 hover:scale-105"
+            >
+              <span className="relative z-10">{isAuthenticated ? "Ir al roadmap" : "Comenzar (crear cuenta)"}</span>
               <div
                 className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                 style={{
@@ -119,6 +155,9 @@ const Header = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal de autenticación montado aquí */}
+      <AuthModal />
     </header>
   );
 };

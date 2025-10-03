@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Header from '@/components/mlp/demo/Header';
 import FormSection from '@/components/mlp/demo/FormSection';
 import PredictionSection from '@/components/mlp/demo/PredictionSection';
-import type { CreditRiskInput, CreditRiskOutput } from '@/lib/api';
+import type { CreditRiskInput, CreditRiskOutput } from '@/services/creditScoringService';
 
 const DemoMLPIndex = () => {
   const [result, setResult] = useState<CreditRiskOutput | null>(null);
